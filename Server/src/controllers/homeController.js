@@ -1,9 +1,6 @@
 const mongoose = require("mongoose");
 const { databaseConfiguration } = require("../config/configDatabase.js");
-const handleHelloWorldsRequest = (req, res) => {
-  res.send("Hello Worlds");
-};
-
+const passwordValidate = process.env.PASSWORD_VALIDATION;
 const createAccountRequest = async (req, res) => {
   try {
     await databaseConfiguration();
@@ -11,8 +8,23 @@ const createAccountRequest = async (req, res) => {
     const objectID = Schema.ObjectId;
     const ExampleSchema = new Schema({
       _id: { type: Schema.Types.ObjectId, auto: true },
-      username: String,
-      password: String,
+      username: {
+        type: String,
+        require: true,
+        min: [6, "{VALUE} be at least 6 characters"],
+        max: [20, "{VALUE} be less than 20 characters"],
+      },
+      password: {
+        type: String,
+        require: true,
+        validate: {
+          validate: function (v) {
+            return passwordValidate.test(v);
+          },
+        },
+        min: [6, "{VALUE} be at least 6 characters"],
+        max: [20, "{VALUE} be less than 20 characters"],
+      },
     });
 
     const ExampleModel = mongoose.model("users", ExampleSchema, "courses");
@@ -22,9 +34,7 @@ const createAccountRequest = async (req, res) => {
     });
     newUser
       .save()
-      .then(() => {
-        res.send("User saved"), console.log("User saved");
-      })
+      .then(() => res.send("User saved"))
       .catch((err) => res.send("Somethings wrongs", err));
   } catch (error) {
     res

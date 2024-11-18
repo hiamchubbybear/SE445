@@ -9,6 +9,7 @@ const databaseConfiguration = async () => {
     console.error("Error connecting to the database:", error);
   }
 };
+
 module.exports = {
   databaseConfiguration,
 };
