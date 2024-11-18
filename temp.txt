@@ -1,0 +1,210 @@
+branch_id: Unique identifier for each branch.
+branch_code: Code representing the branch (unique).
+branch_name: Name of the branch.
+address: Physical address of the branch.
+status: Branch status (active/inactive).
+created_at: Timestamp of when the record was created.
+updated_at: Timestamp of the last update to the record
+
+employee_id: INT, Primary Key
+first_name: VARCHAR(100)
+last_name: VARCHAR(100)
+email: VARCHAR(100), UNIQUE
+phone_number: VARCHAR(25)
+hire_date: DATE
+job_position_id: INT, Foreign Key to job_position
+branch_id: INT, Foreign Key to branch
+department_id: INT, Foreign Key to department
+status: ENUM (e.g., 'active', 'inactive')
+created_at: DATETIME
+updated_at: DATETIME
+
+branch
+
+branch_id: INT, Primary Key
+branch_code: VARCHAR(10), UNIQUE
+branch_name: VARCHAR(100)
+address: TEXT
+status: TINYINT
+created_at: DATETIME
+updated_at: DATETIME
+department
+
+department_id: INT, Primary Key
+department_code: VARCHAR(10), UNIQUE
+department_name: VARCHAR(100)
+status: TINYINT
+created_at: DATETIME
+updated_at: DATETIME
+job_position
+
+position_id: INT, Primary Key
+position_name: VARCHAR(100)
+description: TEXT
+min_salary: DECIMAL(15, 2)
+max_salary: DECIMAL(15, 2)
+payroll
+
+payroll_id: INT, Primary Key
+employee_id: INT, Foreign Key to employee
+period_start_date: DATE
+period_end_date: DATE
+base_salary: DECIMAL(15, 2)
+overtime_amount: DECIMAL(15, 2)
+bonus: DECIMAL(15, 2)
+total_salary: DECIMAL(15, 2)
+status: ENUM
+created_at: DATETIME
+updated_at: DATETIME
+leave_request
+
+leave_id: INT, Primary Key
+employee_id: INT, Foreign Key to employee
+leave_type_id: INT, Foreign Key to leave_type
+start_date: DATE
+end_date: DATE
+reason: TEXT
+status: ENUM
+created_at: DATETIME
+updated_at: DATETIME
+leave_type
+
+leave_type_id: INT, Primary Key
+leave_name: VARCHAR(50)
+description: TEXT
+max_days_per_year: INT
+degree
+
+degree_id: INT, Primary Key
+degree_name: VARCHAR(100)
+institution: VARCHAR(255)
+field_of_study: VARCHAR(100)
+description: TEXT
+employee_degree
+
+employee_id: INT, Foreign Key to employee
+degree_id: INT, Foreign Key to degree
+graduation_date: DATE
+grades: VARCHAR(10)
+benefit
+
+benefit_id: INT, Primary Key
+benefit_name: VARCHAR(100)
+benefit_type_id: INT, Foreign Key to benefit_type
+description: TEXT
+amount: DECIMAL(15, 2)
+is_taxable: TINYINT
+status: ENUM
+benefit_type
+
+benefit_type_id: INT, Primary Key
+type_name: VARCHAR(100)
+description: TEXT
+employee_benefit
+
+employee_id: INT, Foreign Key to employee
+benefit_id: INT, Foreign Key to benefit
+start_date: DATE
+end_date: DATE
+status: ENUM
+job_level
+
+level_id: INT, Primary Key
+level_name: VARCHAR(50)
+description: TEXT
+
+
+ employee
+employee_id: Unique identifier for each employee.
+first_name: Employee's first name.
+last_name: Employee's last name.
+email: Employee's email address (unique).
+phone_number: Contact phone number of the employee.
+hire_date: Date the employee was hired.
+job_position_id: Reference to the employee's job position (linked to job_position table).
+branch_id: Reference to the branch where the employee works (linked to branch table).
+department_id: Reference to the employee's department (linked to department table).
+status: Employment status (e.g., 'active', 'inactive').
+created_at: Timestamp of when the record was created.
+updated_at: Timestamp of the last update to the record.
+2. branch
+branch_id: Unique identifier for each branch.
+branch_code: Code representing the branch (unique).
+branch_name: Name of the branch.
+address: Physical address of the branch.
+status: Branch status (active/inactive).
+created_at: Timestamp of when the record was created.
+updated_at: Timestamp of the last update to the record.
+3. department
+department_id: Unique identifier for each department.
+department_code: Code representing the department (unique).
+department_name: Name of the department.
+status: Department status (active/inactive).
+created_at: Timestamp of when the record was created.
+updated_at: Timestamp of the last update to the record.
+4. job_position
+position_id: Unique identifier for each job position.
+position_name: Name of the job position.
+description: Description of the job role.
+min_salary: Minimum salary for the position.
+max_salary: Maximum salary for the position.
+5. payroll
+payroll_id: Unique identifier for each payroll record.
+employee_id: Reference to the employee (linked to employee table).
+period_start_date: Start date of the payroll period.
+period_end_date: End date of the payroll period.
+base_salary: Base salary for the payroll period.
+overtime_amount: Overtime compensation for the period.
+bonus: Any bonus amount for the period.
+total_salary: Total salary (base + overtime + bonus).
+status: Payroll status (e.g., 'paid', 'pending').
+created_at: Timestamp of when the record was created.
+updated_at: Timestamp of the last update to the record.
+6. leave_request
+leave_id: Unique identifier for each leave request.
+employee_id: Reference to the employee requesting leave (linked to employee table).
+leave_type_id: Type of leave requested (linked to leave_type table).
+start_date: Start date of the leave.
+end_date: End date of the leave.
+reason: Reason for requesting leave.
+status: Status of the leave request (e.g., 'approved', 'denied').
+created_at: Timestamp of when the record was created.
+updated_at: Timestamp of the last update to the record.
+7. leave_type
+leave_type_id: Unique identifier for each leave type.
+leave_name: Name of the leave type (e.g., 'sick leave').
+description: Description of the leave type.
+max_days_per_year: Maximum number of days allowed per year for this leave type.
+8. degree
+degree_id: Unique identifier for each academic degree.
+degree_name: Name of the degree (e.g., 'Bachelor of Science').
+institution: Institution that awarded the degree.
+field_of_study: Field of study or major.
+description: Additional description about the degree.
+9. employee_degree
+employee_id: Reference to the employee (linked to employee table).
+degree_id: Reference to the degree (linked to degree table).
+graduation_date: Date the employee graduated.
+grades: Grades or academic performance.
+10. benefit
+benefit_id: Unique identifier for each benefit.
+benefit_name: Name of the benefit (e.g., 'Health Insurance').
+benefit_type_id: Type of the benefit (linked to benefit_type table).
+description: Description of the benefit.
+amount: Amount of the benefit (if monetary).
+is_taxable: Indicates if the benefit is taxable (1 for true, 0 for false).
+status: Status of the benefit (active/inactive).
+11. benefit_type
+benefit_type_id: Unique identifier for each benefit type.
+type_name: Name of the benefit type.
+description: Description of the benefit type.
+12. employee_benefit
+employee_id: Reference to the employee (linked to employee table).
+benefit_id: Reference to the benefit (linked to benefit table).
+start_date: Start date of the benefit.
+end_date: End date of the benefit (if applicable).
+status: Status of the benefit allocation (e.g., 'active', 'expired').
+13. job_level
+level_id: Unique identifier for each job level.
+level_name: Name of the job level (e.g., 'Junior', 'Senior').
+description: Description of the job level.
