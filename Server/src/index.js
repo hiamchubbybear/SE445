@@ -7,6 +7,7 @@ const port = process.env.PORT;
 const CONNECTION_STRING = process.env.MONGODB_URI;
 const path = require("path");
 const configViewEngine = require("./config/configViewEngine.js");
+app.use(express.json());
 configViewEngine(app);
 app.use("/v1", router);
 console.log(CONNECTION_STRING);

@@ -1,15 +1,22 @@
 const mongoose = require("mongoose");
+const CONNECTION_STRING = process.env.MONGODB_URI;
 const { databaseConfiguration } = require("../config/configDatabase.js");
 const passwordValidate = process.env.PASSWORD_VALIDATION;
+const handleHelloWorldsRequest = () => {
+  res.send("Hello worlds");
+};
 const createAccountRequest = async (req, res) => {
   try {
-    await databaseConfiguration();
+    databaseConfiguration();
+    console.log("Tới 1");
     const Schema = mongoose.Schema;
     const objectID = Schema.ObjectId;
-    const ExampleSchema = new Schema({
+    console.log("Tới 2");
+    const UserSchema = new Schema({
       _id: { type: Schema.Types.ObjectId, auto: true },
       username: {
         type: String,
+        unique: true,
         require: true,
         min: [6, "{VALUE} be at least 6 characters"],
         max: [20, "{VALUE} be less than 20 characters"],
@@ -21,21 +28,40 @@ const createAccountRequest = async (req, res) => {
           validate: function (v) {
             return passwordValidate.test(v);
           },
+          message: (props) => `${props.value} is not available`,
         },
         min: [6, "{VALUE} be at least 6 characters"],
         max: [20, "{VALUE} be less than 20 characters"],
       },
+      email: {
+        type: String,
+        required: true,
+        unique: true,
+        validate: {
+          validator: function (v) {
+            const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            return emailRegex.test(v);
+          },
+          message: (props) => `${props.value} is not a valid email address!`,
+        },
+      },
     });
 
-    const ExampleModel = mongoose.model("users", ExampleSchema, "courses");
-    const newUser = new ExampleModel({
-      username: "xample",
-      password: "hashed_code",
+    const UserAccountModel = mongoose.model("users", UserSchema);
+    const { username, password, email } = req.body;
+    if (!username || !password || !email) {
+      console.log("Missing feild data");
+      return res.status(400).send("Missing required fields");
+    }
+    const NewAccount = new UserAccountModel({
+      username: username,
+      password: password,
+      email: email,
     });
-    newUser
-      .save()
-      .then(() => res.send("User saved"))
-      .catch((err) => res.send("Somethings wrongs", err));
+    console.log("Tới 3");
+    await NewAccount.save();
+    res.status(200).send("Create user succesfully");
+    console.log("Tới 4");
   } catch (error) {
     res
       .status(500)
