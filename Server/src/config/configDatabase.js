@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const CONNECTION_STRING =
   process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/se445";
-const databaseConfiguration = async (mongoose) => {
+const databaseConfiguration = async () => {
   try {
     console.log(CONNECTION_STRING);
 

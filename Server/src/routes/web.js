@@ -2,7 +2,7 @@ const express = require("express");
 const {
   createAccountRequest,
   handleHelloWorldsRequest,
-} = require("../controllers/homeController.js");
+} = require("../controllers/accountController.js");
 
 const route = express.Router();
 route.post("/create", createAccountRequest);
