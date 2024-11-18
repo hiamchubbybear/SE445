@@ -1,11 +1,11 @@
 const express = require("express");
 const {
-  homepageRequest,
+  createAccountRequest,
   handleHelloWorldsRequest,
 } = require("../controllers/homeController.js");
 
 const route = express.Router();
-route.get("/", homepageRequest);
+route.get("/", createAccountRequest);
 route.get("/helloworlds", handleHelloWorldsRequest);
-route.get("/homepage", homepageRequest);
+route.get("/login", createAccountRequest);
 module.exports = route;
