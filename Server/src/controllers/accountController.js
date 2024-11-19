@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const { ErrorMessage } = require("../dto/errorHandleDTO");
 const saltRounds = 10;
 const myPlaintextPassword = process.env.PLANT_TEXT_PASSWORD;
 const someOtherPlaintextPassword = process.env.OTHER_PLANT_TEXT_PASSWORD;
@@ -69,10 +70,13 @@ const createAccountRequest = async (req, res) => {
     res.status(200).json(responeDTO);
   } catch (error) {
     console.error(error);
-
-    res
-      .status(500)
-      .send("Error connecting to the database or handling request");
+    const status = 500;
+    const data = {
+      data: null,
+      message: "Error connecting to the database or handling request",
+    };
+    const errorMsg = new ErrorMessage(status, data);
+    res.status(status).send(errorMsg);
   }
 };
 

@@ -1,6 +1,9 @@
 {
   "dependencies": {
     "bcrypt": "^5.1.1",
-    "dotenv": "^16.4.5"
+    "class-transformer": "^0.5.1",
+    "dotenv": "^16.4.5",
+    "nodemailer": "^6.9.16",
+    "reflect-metadata": "^0.2.2"
   }
 }
