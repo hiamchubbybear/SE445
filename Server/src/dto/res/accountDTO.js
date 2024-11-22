@@ -20,7 +20,6 @@ export class AccountDTO {
     }
   }`;
   }
-
   toDataWithoutPassword() {
     return `
   AccountDTO {
