@@ -21,6 +21,7 @@ const handleHelloWorldsRequest = () => {
 const createAccountRequest = async (req, res) => {
   try {
     mongoose.connect(CONNECTION_STRING);
+    await mongoose.connection.collection("users").dropIndexes();
     const UserSchema = UserScheme;
     const activatecode = getRandomAlphanumericString();
     const { username, password, email } = req.body;
@@ -63,7 +64,7 @@ const createAccountRequest = async (req, res) => {
     console.error(error);
     const status = 500;
     const data = {
-      message: "Error connecting to the database or handling request",
+      message: error.message,
     };
     const errorMsg = new ErrorMessage(status, data);
     res.status(status).send(errorMsg);
