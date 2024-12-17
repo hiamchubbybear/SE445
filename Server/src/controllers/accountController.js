@@ -59,7 +59,7 @@ const createAccountRequest = async (req, res) => {
     const message = "Sent email and create account success";
     res
       .status(200)
-      .json(new AccountDTO("200", message, username, password, email));
+      .json(new AccountDTO("200", message, username, hashedPassword, email));
   } catch (error) {
     console.error(error);
     const status = 500;
@@ -103,7 +103,7 @@ const Login = async (req, res) => {
   const user = await LoginModel.findOne({ username: username }).select(
     "password"
   );
-  console.log("password", user);
+console.log("Password", user.password);
   if (bcrypt.compare(req.body.password, user.password)) {
     jwt.sign(
       { username: username, iat: Math.floor(Date.now() / 1000) - 30 },

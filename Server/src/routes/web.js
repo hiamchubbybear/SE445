@@ -8,5 +8,5 @@ const {
 const route = express.Router();
 route.post("/create", createAccountRequest);
 route.get("/helloworld", handleHelloWorldsRequest);
-route.get("/login", Login);
+route.post("/login", Login);
 module.exports = route;
