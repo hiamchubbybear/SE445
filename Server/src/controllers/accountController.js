@@ -59,7 +59,7 @@ const createAccountRequest = async (req, res) => {
     const message = "Sent email and create account success";
     res
       .status(200)
-      .json(new AccountDTO("200", message, username, hashedPassword, email));
+      .json(new AccountDTO("200", message, username, password, email));
   } catch (error) {
     console.error(error);
     const status = 500;
@@ -71,11 +71,41 @@ const createAccountRequest = async (req, res) => {
   }
 };
 const forgotPasswordRequest = async (req, res) => {
-  const { email } = req.body;
-  console.log(email);
-  mongoose.connect(CONNECTION_STRING);
-  mongoose.Collection("users").fotgotPasswordEmailSender(email);
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({
+        code: 400,
+        message: "Missing email",
+      });
+    }
+    await mongoose.connect(CONNECTION_STRING);
+    const UserAccountModel = mongoose.models.users || mongoose.model("users", UserScheme);
+    const user = await UserAccountModel.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        code: 404,
+        message: "Email not found",
+      });
+    }
+    const resetCode = getRandomAlphanumericString();
+    user.activatecode = resetCode;
+    await user.save();
+    await fotgotPasswordEmailSender(email, user.username, resetCode);
+    return res.status(200).json({
+      code: 200,
+      message: "Reset code sent to your email",
+    });
+  } catch (error) {
+    console.error("Error in forgotPasswordRequest:", error.message);
+    return res.status(500).json({
+      code: 500,
+      message: error.message,
+    });
+  }
 };
+
 
 const Login = async (req, res) => {
   mongoose.connect(CONNECTION_STRING);
@@ -103,7 +133,7 @@ const Login = async (req, res) => {
   const user = await LoginModel.findOne({ username: username }).select(
     "password"
   );
-console.log("Password", user.password);
+  console.log("password", user);
   if (bcrypt.compare(req.body.password, user.password)) {
     jwt.sign(
       { username: username, iat: Math.floor(Date.now() / 1000) - 30 },
@@ -112,7 +142,7 @@ console.log("Password", user.password);
         algorithm: "HS256",
         expiresIn: "1h",
         issuer: "chessy",
-        jwtid: "jwtid",
+    jwtid: "jwtid",
       },
       (err, decodeURI) => {
         if (err) console.log("There are some err " + err.message);
@@ -134,4 +164,5 @@ module.exports = {
   handleHelloWorldsRequest,
   createAccountRequest,
   Login,
+  forgotPasswordRequest
 };

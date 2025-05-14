@@ -1,5 +1,6 @@
 const express = require("express");
 require("dotenv").config();
+const cors = require("cors");
 const router = require("./routes/web.js");
 const app = express();
 const ejs = require("ejs");
@@ -8,8 +9,16 @@ const CONNECTION_STRING = process.env.MONGODB_URI;
 const path = require("path");
 const configViewEngine = require("./config/configViewEngine.js");
 app.use(express.json());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
+
 configViewEngine(app);
-app.use("v1", router);
+app.use("/v1", router);
+
 console.log(CONNECTION_STRING);
 
 app.listen(port, () => {
