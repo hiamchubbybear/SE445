@@ -1,10 +1,11 @@
 const express = require("express");
 const {
   createAccountRequest,
-  handleHelloWorldsRequest,
   Login,
   forgotPasswordRequest,
   resetPassword,
+  inactivateAccount,
+  activateAccount,
 } = require("../controllers/accountController.js");
 const { purchaseCourses } = require("../controllers/purchaseController");
 const {
@@ -21,6 +22,7 @@ const {
 const {
   getProfile,
   updateProfile,
+  getAllProfiles,
 } = require("../controllers/profileController.js");
 const { verifyToken, requireRole } = require("../middleware/auth.js");
 
@@ -28,7 +30,6 @@ const route = express.Router();
 
 // Public Routes
 route.post("/create", createAccountRequest);
-route.get("/helloworld", handleHelloWorldsRequest);
 route.post("/login", Login);
 route.post("/forgot-password", forgotPasswordRequest);
 route.post("/reset-password", resetPassword);
@@ -40,6 +41,20 @@ route.put(
   verifyToken,
   requireRole("ADMIN"),
   updateCourse
+);
+route.get("/admin/profiles", verifyToken, requireRole("ADMIN"), getAllProfiles);
+// Admin Account Management
+route.post(
+  "/admin/inactivate",
+  verifyToken,
+  requireRole("ADMIN"),
+  inactivateAccount
+);
+route.post(
+  "/admin/activate",
+  verifyToken,
+  requireRole("ADMIN"),
+  activateAccount
 );
 
 // Cart (User Authenticated Required)
