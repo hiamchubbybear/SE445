@@ -191,7 +191,7 @@ const resetPassword = async (req, res) => {
 
     let payload;
     try {
-      payload = jwt.verify(token, process.env.JWT_SECRET);
+      payload = jwt.verify(token, SIGNER_KEY);
     } catch (err) {
       return res
         .status(401)

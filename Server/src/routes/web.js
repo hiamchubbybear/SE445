@@ -4,6 +4,7 @@ const {
   handleHelloWorldsRequest,
   Login,
   forgotPasswordRequest,
+  resetPassword,
 } = require("../controllers/accountController.js");
 const { purchaseCourses } = require("../controllers/purchaseController");
 const {
@@ -30,7 +31,7 @@ route.post("/create", createAccountRequest);
 route.get("/helloworld", handleHelloWorldsRequest);
 route.post("/login", Login);
 route.post("/forgot-password", forgotPasswordRequest);
-
+route.post("/reset-password", resetPassword);
 // Admin Course Management
 route.get("/admin/courses", verifyToken, requireRole("ADMIN"), getCourses);
 route.post("/admin/courses", verifyToken, requireRole("ADMIN"), createCourse);
