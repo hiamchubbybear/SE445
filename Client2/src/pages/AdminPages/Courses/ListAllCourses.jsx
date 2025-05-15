@@ -29,6 +29,7 @@ function ListAllCourses() {
         },
       });
       setCourses(res.data.courses);
+      console.log(res.data.courses);
     } catch (err) {
       console.error("Lỗi khi lấy danh sách khoá học:", err);
     }
@@ -59,72 +60,74 @@ function ListAllCourses() {
   };
 
   return (
-    <Box sx={{ padding: 4 }}>
-      <Typography variant="h5" gutterBottom>
-        Danh sách khoá học
-      </Typography>
+    <div className="max-h-screen  bg-gray-100 ">
+      <Box sx={{ padding: 4 }}>
+        <Typography variant="h5" gutterBottom>
+          Danh sách khoá học
+        </Typography>
 
-      <Button
-        variant="contained"
-        color="primary"
-        startIcon={<Add />}
-        onClick={handleAdd}
-        sx={{ mb: 2 }}
-      >
-        Thêm khoá học
-      </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<Add />}
+          onClick={handleAdd}
+          sx={{ mb: 2 }}
+        >
+          Thêm khoá học
+        </Button>
 
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead sx={{ backgroundColor: "#f5f5f5" }}>
-            <TableRow>
-              <TableCell>Tiêu đề</TableCell>
-              <TableCell>Mô tả</TableCell>
-              <TableCell>Giá</TableCell>
-              <TableCell>Tags</TableCell>
-              <TableCell>Ngày tạo</TableCell>
-              <TableCell align="center">Hành động</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {courses.map((course) => (
-              <TableRow key={course._id}>
-                <TableCell>{course.title}</TableCell>
-                <TableCell>{course.description}</TableCell>
-                <TableCell>
-                  {course.price === 0 ? "Miễn phí" : `${course.price}₫`}
-                </TableCell>
-                <TableCell>{course.tags.join(", ")}</TableCell>
-                <TableCell>
-                  {new Date(course.createdAt).toLocaleString("vi-VN")}
-                </TableCell>
-                <TableCell align="center">
-                  <IconButton
-                    color="primary"
-                    onClick={() => handleEdit(course)}
-                  >
-                    <Edit />
-                  </IconButton>
-                  <IconButton
-                    color="error"
-                    onClick={() => handleDelete(course._id)}
-                  >
-                    <Delete />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
-            {courses.length === 0 && (
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead sx={{ backgroundColor: "#f5f5f5" }}>
               <TableRow>
-                <TableCell colSpan={6} align="center">
-                  Không có dữ liệu
-                </TableCell>
+                <TableCell>Tiêu đề</TableCell>
+                <TableCell>Mô tả</TableCell>
+                <TableCell>Giá</TableCell>
+                <TableCell>Tags</TableCell>
+                <TableCell>Ngày tạo</TableCell>
+                <TableCell align="center">Hành động</TableCell>
               </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Box>
+            </TableHead>
+            <TableBody>
+              {courses.map((course) => (
+                <TableRow key={course._id}>
+                  <TableCell>{course.title}</TableCell>
+                  <TableCell>{course.description}</TableCell>
+                  <TableCell>
+                    {course.price === 0 ? "Miễn phí" : `${course.price}₫`}
+                  </TableCell>
+                  <TableCell>{course.tags.join(", ")}</TableCell>
+                  <TableCell>
+                    {new Date(course.createdAt).toLocaleString("vi-VN")}
+                  </TableCell>
+                  <TableCell align="center">
+                    <IconButton
+                      color="primary"
+                      onClick={() => handleEdit(course)}
+                    >
+                      <Edit />
+                    </IconButton>
+                    <IconButton
+                      color="error"
+                      onClick={() => handleDelete(course._id)}
+                    >
+                      <Delete />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+              {courses.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={6} align="center">
+                    Không có dữ liệu
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
+    </div>
   );
 }
 

@@ -30,7 +30,7 @@ export default function Login() {
       localStorage.setItem("username", email);
 
       setLoading(false);
-      if (email.toLowerCase() === "admin1") {
+      if (email.toLowerCase() === "admin") {
         navigate("/admin/dashboard");
       } else {
         navigate("/member");
@@ -91,6 +91,11 @@ export default function Login() {
           Chưa có tài khoản?{" "}
           <Link to="/register" className="text-blue-600 hover:underline">
             Đăng ký
+          </Link>
+        </p>
+        <p className="text-center text-sm ">
+          <Link to="/" className="text-blue-600 hover:underline">
+            Quay về trang chủ
           </Link>
         </p>
       </div>

@@ -97,6 +97,11 @@ export default function Register() {
             Đăng nhập
           </Link>
         </p>
+        <p className="text-center text-sm ">
+          <Link to="/" className="text-blue-600 hover:underline">
+            Quay về trang chủ
+          </Link>
+        </p>
       </div>
     </div>
   );
