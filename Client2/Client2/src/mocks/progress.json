@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "title": "ReactJS Cơ Bản",
+    "description": "Học cách tạo component, props, state và vòng đời trong React.",
+    "progress": 70,
+    "status": "Đang học"
+  },
+  {
+    "id": 2,
+    "title": "Tailwind CSS Nâng Cao",
+    "description": "Tùy chỉnh theme, responsive design và tạo layout nâng cao.",
+    "progress": 40,
+    "status": "Đang học"
+  },
+  {
+    "id": 3,
+    "title": "JavaScript ES6+",
+    "description": "Hiểu về arrow functions, destructuring, async/await, và modules.",
+    "progress": 100,
+    "status": "Hoàn thành"
+  },
+  {
+    "id": 4,
+    "title": "HTML & CSS Cơ Bản",
+    "description": "Nắm vững cú pháp và cách xây dựng trang web cơ bản bằng HTML/CSS.",
+    "progress": 100,
+    "status": "Hoàn thành"
+  }
+]

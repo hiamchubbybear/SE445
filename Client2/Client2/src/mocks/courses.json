@@ -1,0 +1,34 @@
+[
+  {
+    "id": 1,
+    "title": "Lập trình React cơ bản",
+    "description": "Khóa học dành cho người mới bắt đầu học React.",
+    "price": 0,
+    "image": "https://picsum.photos/seed/react/300/200",
+    "tags": ["Miễn phí", "Cơ bản"]
+  },
+  {
+    "id": 2,
+    "title": "Phát triển Web với Node.js",
+    "description": "Xây dựng backend API với Express và MongoDB.",
+    "price": 199000,
+    "image": "https://picsum.photos/seed/nodejs/300/200",
+    "tags": ["Trả phí", "Backend"]
+  },
+  {
+    "id": 3,
+    "title": "Thiết kế UI/UX cho người mới",
+    "description": "Tìm hiểu về thiết kế trải nghiệm người dùng và giao diện.",
+    "price": 0,
+    "image": "https://picsum.photos/seed/uiux/300/200",
+    "tags": ["Miễn phí", "Thiết kế"]
+  },
+  {
+    "id": 4,
+    "title": "AI cơ bản với Python",
+    "description": "Khóa học giới thiệu về trí tuệ nhân tạo và các thuật toán cơ bản.",
+    "price": 299000,
+    "image": "https://picsum.photos/seed/ai/300/200",
+    "tags": ["Trả phí", "AI"]
+  }
+]
