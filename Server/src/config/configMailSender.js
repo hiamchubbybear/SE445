@@ -67,8 +67,8 @@ async function emailSendService(email, username, code) {
 `,
   });
 }
-const fotgotPasswordEmailSender = async (email) => {
-  transporter.sendMail({
+const fotgotPasswordEmailSender = async (email, username, code) => {
+  await transporter.sendMail({
     from: '"no-reply" <codemail.noreply@gmail.com>',
     to: email,
     subject: `Reset password ${username}`,

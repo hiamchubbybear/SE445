@@ -17,7 +17,7 @@ const UserScheme = new mongoose.Schema(
     username: {
       type: String,
       required: true,
-      minlength: [6, "Username must be at least 6 characters"],
+      minlength: [5, "Username must be at least 5 characters"],
       maxlength: [20, "Username must be less than 20 characters"],
       unique: true,
     },
@@ -58,7 +58,7 @@ const LoginSchema = new mongoose.Schema({
   username: {
     type: String,
     required: true,
-    minlength: [6, "Username must be at least 6 characters"],
+    minlength: [5, "Username must be at least 5 characters"],
     maxlength: [20, "Username must be less than 20 characters"],
     unique: true,
   },
