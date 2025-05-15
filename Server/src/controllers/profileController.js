@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
-const User = mongoose.model("users");
+const User = require("../collection/users.js")
 const CONNECTION_STRING =
   process.env.MONGO_URI || "mongodb://localhost:27017/se445";
 

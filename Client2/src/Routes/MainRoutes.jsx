@@ -12,11 +12,14 @@ import ForgetPass from "../pages/ForgetPass";
 import DashBoard from "../pages/AdminPages/DashBoard";
 import AdminPage from "../pages/AdminPages/AdminPage";
 import ListAllCourses from "../pages/AdminPages/Courses/ListAllCourses";
+import UserManager from "../pages/AdminPages/User/UserManager";
+import ResetPassword from "../pages/ResetPassword";
 export default function MainRoutes() {
   return (
     <>
       <ScrollTop />
       <Routes>
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/" element={<MainLayout />}>
@@ -31,6 +34,7 @@ export default function MainRoutes() {
         <Route path="/admin" element={<AdminPage />}>
           <Route path="/admin/dashboard" element={<DashBoard />} />
           <Route path="/admin/courses" element={<ListAllCourses />} />
+          <Route path="/admin/users" element={<UserManager />} />
         </Route>
       </Routes>
     </>

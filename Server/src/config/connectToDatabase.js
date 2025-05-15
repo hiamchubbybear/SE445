@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 let isConnected = false;
-CONNECTION_STRING = process.env.MONGODB_URI
+const CONNECTION_STRING = "mongodb://localhost:27017/se445"
 async function connectToDatabase() {
   if (isConnected) return;
   try {

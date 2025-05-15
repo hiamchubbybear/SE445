@@ -12,6 +12,7 @@ const {
   getCourses,
   createCourse,
   updateCourse,
+  userGetCourses,
 } = require("../controllers/coursesController.js");
 const {
   getCart,
@@ -25,7 +26,15 @@ const {
   getAllProfiles,
 } = require("../controllers/profileController.js");
 const { verifyToken, requireRole } = require("../middleware/auth.js");
-
+const {
+  createPost,
+  updatePost,
+  deletePost,
+  addComment,
+  deleteComment,
+  getPostWithComments,
+  getAllPosts,
+} = require("../controllers/socialController.js");
 const route = express.Router();
 
 // Public Routes
@@ -68,5 +77,18 @@ route.post("/purchase", verifyToken, purchaseCourses);
 // Profile
 route.get("/", verifyToken, getProfile);
 route.put("/", verifyToken, updateProfile);
+// Courses
+route.get("/courses", verifyToken, userGetCourses);
+
+// Post
+route.post("/posts", verifyToken, createPost);
+route.put("/posts/:id", verifyToken, updatePost);
+route.delete("/posts/:id", verifyToken, deletePost);
+route.get("/posts/:id", getPostWithComments);
+route.get("/posts", getAllPosts);
+
+// Comment
+route.post("/comments", verifyToken, addComment);
+route.delete("/comments/:id", verifyToken, deleteComment);
 
 module.exports = route;

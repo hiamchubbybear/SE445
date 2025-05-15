@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Course = require("../collection/courses.js");
 const { ErrorMessage } = require("../dto/errorHandleDTO.js");
-
+const User = require("../collection/users.js");
 const CONNECTION_STRING =
   process.env.MONGODB_URI || "mongodb://localhost:27017/se445";
 
@@ -68,9 +68,52 @@ const updateCourse = async (req, res) => {
     res.status(status).send(errorMsg);
   }
 };
+const userGetCourses = async (req, res) => {
+  try {
+    await mongoose.connect(CONNECTION_STRING);
+
+    const userId = req.user?.id;
+    const courses = await Course.find();
+    const user = await User.findById(userId).populate(
+      "purchasedCourses",
+      null,
+      null,
+      { strictPopulate: false }
+    );
+
+    if (!user) {
+      return res.status(404).json({
+        status: 404,
+        data: { message: "User not found" },
+      });
+    }
+
+    const purchasedIds = (user.purchasedCourses || []).map((course) =>
+      course._id.toString()
+    );
+    const result = courses.map((course) => {
+      const isPurchased = purchasedIds.includes(course._id.toString());
+      return {
+        ...course.toObject(),
+        purchased: isPurchased,
+      };
+    });
+    const purchasedCourses = result.filter((course) => course.purchased);
+    const notPurchasedCourses = result.filter((course) => !course.purchased);
+    const sortedCourses = [...purchasedCourses, ...notPurchasedCourses];
+
+    res.status(200).json({ courses: sortedCourses });
+  } catch (error) {
+    const status = 500;
+    const data = { message: error.message };
+    const errorMsg = new ErrorMessage(status, data);
+    res.status(status).send(errorMsg);
+  }
+};
 
 module.exports = {
   getCourses,
   createCourse,
+  userGetCourses,
   updateCourse,
 };

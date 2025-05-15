@@ -16,7 +16,8 @@ const CONNECTION_STRING = process.env.MONGODB_URI;
 const SIGNER_KEY = process.env.SIGNER_KEY;
 const clientURL = process.env.CLIENT_URL;
 
-const UserModel = mongoose.models.users || mongoose.model("users", UserScheme);
+const UserModel = require('../collection/users.js');
+
 
 const createAccountRequest = async (req, res) => {
   try {
@@ -49,12 +50,12 @@ const createAccountRequest = async (req, res) => {
       password: hashedPassword,
       email,
       activatecode,
-      status: "activate",
+      status: "active",
     });
 
     await newAccount.save();
     await emailSendService(email, username, activatecode);
-
+    await addPurchasedCoursesField();
     res
       .status(200)
       .json(
@@ -100,7 +101,7 @@ const forgotPasswordRequest = async (req, res) => {
       }
     );
 
-    const resetLink = `https://${clientURL}/reset-password?token=${resetToken}`;
+    const resetLink = `http://${clientURL}/reset-password?token=${resetToken}`;
     await fotgotPasswordEmailSender(user.email, user.username, resetLink);
 
     res.status(200).json({
@@ -279,7 +280,17 @@ const activateAccount = async (req, res) => {
     res.status(500).json({ code: 500, message: error.message });
   }
 };
+async function addPurchasedCoursesField() {
+  await mongoose.connect(CONNECTION_STRING);
+  const result = await User.updateMany(
+    { purchasedCourses: { $exists: false } },
+    { $set: { purchasedCourses: [] } }
+  );
 
+  console.log("Updated users:", result.modifiedCount);
+
+  mongoose.disconnect();
+}
 module.exports = {
   createAccountRequest,
   Login,
@@ -287,4 +298,5 @@ module.exports = {
   resetPassword,
   inactivateAccount,
   activateAccount,
+  addPurchasedCoursesField,
 };
