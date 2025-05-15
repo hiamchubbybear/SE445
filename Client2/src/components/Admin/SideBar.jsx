@@ -6,11 +6,11 @@ function SideBar() {
 
   const menuItems = [
     { label: "Quản lý tài liệu", path: "/admin/tai-lieu" },
-    { label: "Quản lý tài khoản", path: "/admin/tai-khoan" },
+    { label: "Quản lý tài khoản", path: "/admin/users" },
     { label: "Quản lý tin tức", path: "/admin/tin-tuc" },
     { label: "Quản lý khoá học", path: "/admin/courses" },
     { label: "Quản lý thanh toán", path: "/admin/thanh-toan" },
-    { label: "Báo cáo thống kê", path: "/admin/bao-cao" },
+    { label: "Báo cáo thống kê", path: "/admin/dashboard" },
   ];
 
   const handleLogout = () => {

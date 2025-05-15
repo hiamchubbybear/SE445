@@ -100,7 +100,7 @@ const forgotPasswordRequest = async (req, res) => {
       }
     );
 
-    const resetLink = `https://${clientURL}/reset-password?token=${resetToken}`;
+    const resetLink = `http://${clientURL}/reset-password?token=${resetToken}`;
     await fotgotPasswordEmailSender(user.email, user.username, resetLink);
 
     res.status(200).json({

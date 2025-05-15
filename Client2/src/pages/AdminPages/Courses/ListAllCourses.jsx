@@ -14,9 +14,18 @@ import {
 } from "@mui/material";
 import { Add, Edit, Delete } from "@mui/icons-material";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import AddCourseDialog from "./AddCourseDialog";
+import EditCourseDialog from "./EditCourseDialog";
+import TablePagination from "@mui/material/TablePagination";
 function ListAllCourses() {
   const [courses, setCourses] = useState([]);
-
+  const [openAdd, setOpenAdd] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
+  const [selectedCourse, setSelectedCourse] = useState(null);
+  const [page, setPage] = useState(0); // page bắt đầu từ 0
+  const rowsPerPage = 10;
   useEffect(() => {
     fetchCourses();
   }, []);
@@ -29,9 +38,9 @@ function ListAllCourses() {
         },
       });
       setCourses(res.data.courses);
-      console.log(res.data.courses);
     } catch (err) {
       console.error("Lỗi khi lấy danh sách khoá học:", err);
+      toast.error("❌ Lỗi khi lấy danh sách khoá học.");
     }
   };
 
@@ -43,45 +52,65 @@ function ListAllCourses() {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      setCourses(courses.filter((course) => course._id !== id));
+      setCourses((prev) => prev.filter((course) => course._id !== id));
+      toast.success("✅ Xoá khoá học thành công!");
     } catch (err) {
       console.error("Lỗi khi xoá khoá học:", err);
+      toast.error("❌ Lỗi khi xoá khoá học.");
     }
   };
 
   const handleEdit = (course) => {
-    alert(`Sửa khóa học: ${course.title}`);
-    // hoặc mở form chỉnh sửa
+    setSelectedCourse(course);
+    setOpenEdit(true);
   };
 
-  const handleAdd = () => {
-    alert("Thêm khoá học mới");
-    // hoặc mở form thêm mới
+  const handleCourseAdded = (newCourse) => {
+    setCourses((prev) => [...prev, newCourse]);
+  };
+
+  const handleCourseUpdated = (updatedCourse) => {
+    setCourses((prev) =>
+      prev.map((c) => (c._id === updatedCourse._id ? updatedCourse : c))
+    );
   };
 
   return (
-    <div className="max-h-screen  bg-gray-100 ">
+    <div className="max-h-screen bg-gray-100">
       <Box sx={{ padding: 4 }}>
         <Typography variant="h5" gutterBottom>
           Danh sách khoá học
         </Typography>
-
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<Add />}
-          onClick={handleAdd}
-          sx={{ mb: 2 }}
-        >
-          Thêm khoá học
-        </Button>
+        <div className="flex flex-row">
+          {" "}
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<Add />}
+            onClick={() => setOpenAdd(true)}
+            sx={{ mb: 2 }}
+          >
+            Thêm khoá học
+          </Button>
+          <TablePagination
+            sx={{ marginLeft: "auto" }}
+            component="div"
+            count={courses.length}
+            page={page}
+            onPageChange={(e, newPage) => setPage(newPage)}
+            rowsPerPage={rowsPerPage}
+            rowsPerPageOptions={[10]}
+          />
+        </div>
 
         <TableContainer component={Paper}>
           <Table>
             <TableHead sx={{ backgroundColor: "#f5f5f5" }}>
               <TableRow>
+                <TableCell>STT</TableCell>
                 <TableCell>Tiêu đề</TableCell>
                 <TableCell>Mô tả</TableCell>
+                <TableCell>Ảnh</TableCell>
                 <TableCell>Giá</TableCell>
                 <TableCell>Tags</TableCell>
                 <TableCell>Ngày tạo</TableCell>
@@ -89,33 +118,59 @@ function ListAllCourses() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {courses.map((course) => (
-                <TableRow key={course._id}>
-                  <TableCell>{course.title}</TableCell>
-                  <TableCell>{course.description}</TableCell>
-                  <TableCell>
-                    {course.price === 0 ? "Miễn phí" : `${course.price}₫`}
-                  </TableCell>
-                  <TableCell>{course.tags.join(", ")}</TableCell>
-                  <TableCell>
-                    {new Date(course.createdAt).toLocaleString("vi-VN")}
-                  </TableCell>
-                  <TableCell align="center">
-                    <IconButton
-                      color="primary"
-                      onClick={() => handleEdit(course)}
-                    >
-                      <Edit />
-                    </IconButton>
-                    <IconButton
-                      color="error"
-                      onClick={() => handleDelete(course._id)}
-                    >
-                      <Delete />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {courses
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((course, index) => (
+                  <TableRow key={course._id}>
+                    <TableCell>{page * rowsPerPage + index + 1}</TableCell>
+                    {/* ✅ STT bắt đầu từ 1 */}
+                    <TableCell>{course.title}</TableCell>
+                    <TableCell>{course.description}</TableCell>
+                    <TableCell>
+                      {course.price === 0
+                        ? "Miễn phí"
+                        : new Intl.NumberFormat("vi-VN", {
+                            style: "currency",
+                            currency: "VND",
+                            maximumFractionDigits: 0,
+                          }).format(course.price)}
+                    </TableCell>
+                    <TableCell>{course.tags?.join(", ")}</TableCell>
+                    <TableCell>
+                      <img
+                        src={course.image}
+                        alt={course.title}
+                        style={{
+                          width: "80px",
+                          height: "auto",
+                          borderRadius: "6px",
+                        }}
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src =
+                            "https://via.placeholder.com/80x50?text=No+Image";
+                        }}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      {new Date(course.createdAt).toLocaleString("vi-VN")}
+                    </TableCell>
+                    <TableCell align="center">
+                      <IconButton
+                        color="primary"
+                        onClick={() => handleEdit(course)}
+                      >
+                        <Edit />
+                      </IconButton>
+                      <IconButton
+                        color="error"
+                        onClick={() => handleDelete(course._id)}
+                      >
+                        <Delete />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
               {courses.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={6} align="center">
@@ -127,6 +182,21 @@ function ListAllCourses() {
           </Table>
         </TableContainer>
       </Box>
+
+      {/* Dialogs */}
+      <AddCourseDialog
+        open={openAdd}
+        onClose={() => setOpenAdd(false)}
+        onCourseAdded={handleCourseAdded}
+      />
+      <EditCourseDialog
+        open={openEdit}
+        onClose={() => setOpenEdit(false)}
+        course={selectedCourse}
+        onUpdated={handleCourseUpdated}
+      />
+
+      <ToastContainer position="top-right" autoClose={2000} />
     </div>
   );
 }
