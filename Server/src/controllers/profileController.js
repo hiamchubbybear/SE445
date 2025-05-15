@@ -46,8 +46,19 @@ const updateProfile = async (req, res) => {
     res.status(500).json({ message: "Update failed", error: err.message });
   }
 };
+const getAllProfiles = async (req, res) => {
+  try {
+    await ensureConnected();
 
+    const users = await User.find({}, "-password -activatecode");
+    res.status(200).json({ total: users.length, users });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
 module.exports = {
   getProfile,
   updateProfile,
+  getAllProfiles,
+  ensureConnected,
 };
