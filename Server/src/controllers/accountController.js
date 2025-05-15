@@ -1,10 +1,8 @@
-const fs = require("fs");
 const jwt = require("jsonwebtoken");
 const SIGNER_KEY = process.env.SIGNER_KEY;
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
-const encryptedPassword = require("../middleware/encryptingPassword.js");
-const nodemailer = require("nodemailer");
+const clientURL = process.env.CLIENT_URL;
 const { getRandomAlphanumericString } = require("../config/randomAccount.js");
 const { ErrorMessage } = require("../dto/errorHandleDTO.js");
 const { hashPassword } = require("../middleware/hashPassword.js");
@@ -90,45 +88,39 @@ const createAccountRequest = async (req, res) => {
 const forgotPasswordRequest = async (req, res) => {
   try {
     const { email } = req.body;
+
     if (!email) {
-      return res.status(400).json({
-        code: 400,
-        message: "Missing email",
-      });
+      return res.status(400).json({ code: 400, message: "Missing email" });
     }
+
     await mongoose.connect(CONNECTION_STRING);
     const UserAccountModel =
       mongoose.models.users || mongoose.model("users", UserScheme);
-
     const user = await UserAccountModel.findOne({ email });
 
     if (!user) {
-      return res.status(404).json({
-        code: 404,
-        message: "Email not found",
-      });
+      return res.status(404).json({ code: 404, message: "Email not found" });
     }
-    console.log("User:", user);
-    console.log("Username:", user.username);
 
-    const resetCode = getRandomAlphanumericString();
-    user.activatecode = resetCode;
-    await user.save();
-    await fotgotPasswordEmailSender(email, user.username, resetCode);
+    const resetToken = jwt.sign(
+      { email: user.email, purpose: "reset" },
+      process.env.SIGNER_KEY,
+      { expiresIn: "15m" }
+    );
+
+    const resetLink = `https://${clientURL}/reset-password?token=${resetToken}`;
+
+    await fotgotPasswordEmailSender(user.email, user.username, resetLink);
 
     res.status(200).json({
       code: 200,
-      message: "Reset code sent to your email",
+      message: "Reset link sent to your email",
     });
   } catch (error) {
     console.error("Error in forgotPasswordRequest:", error.message);
-    res.status(500).json({
-      code: 500,
-      message: error.message,
-    });
+    res.status(500).json({ code: 500, message: error.message });
   }
 };
-
 const Login = async (req, res) => {
   try {
     await mongoose.connect(CONNECTION_STRING);
@@ -188,10 +180,52 @@ const Login = async (req, res) => {
     });
   }
 };
+const resetPassword = async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+    if (!token || !newPassword) {
+      return res
+        .status(400)
+        .json({ code: 400, message: "Missing token or password" });
+    }
+
+    let payload;
+    try {
+      payload = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (err) {
+      return res
+        .status(401)
+        .json({ code: 401, message: "Invalid or expired token" });
+    }
+
+    if (payload.purpose !== "reset") {
+      return res
+        .status(400)
+        .json({ code: 400, message: "Invalid token purpose" });
+    }
+
+    const UserAccountModel =
+      mongoose.models.users || mongoose.model("users", UserScheme);
+    const user = await UserAccountModel.findOne({ email: payload.email });
+
+    if (!user) {
+      return res.status(404).json({ code: 404, message: "User not found" });
+    }
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+
+    res.status(200).json({ code: 200, message: "Password reset successfully" });
+  } catch (error) {
+    console.error("Error in resetPassword:", error.message);
+    res.status(500).json({ code: 500, message: error.message });
+  }
+};
 
 module.exports = {
   handleHelloWorldsRequest,
   createAccountRequest,
   Login,
   forgotPasswordRequest,
+  resetPassword,
 };

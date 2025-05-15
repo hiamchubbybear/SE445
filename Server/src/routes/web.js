@@ -5,22 +5,22 @@ const {
   Login,
   forgotPasswordRequest,
 } = require("../controllers/accountController.js");
-
 const { purchaseCourses } = require("../controllers/purchaseController");
-
 const {
   getCourses,
   createCourse,
   updateCourse,
 } = require("../controllers/coursesController.js");
-
 const {
   getCart,
   addToCart,
   removeFromCart,
   clearCart,
 } = require("../controllers/cartController");
-
+const {
+  getProfile,
+  updateProfile,
+} = require("../controllers/profileController.js");
 const { verifyToken, requireRole } = require("../middleware/auth.js");
 
 const route = express.Router();
@@ -49,5 +49,8 @@ route.post("/cart/clear", verifyToken, clearCart);
 
 // Course Purchase
 route.post("/purchase", verifyToken, purchaseCourses);
+// Profile
+route.get("/", verifyToken, getProfile);
+route.put("/", verifyToken, updateProfile);
 
 module.exports = route;
