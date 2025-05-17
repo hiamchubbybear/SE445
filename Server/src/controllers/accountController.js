@@ -54,7 +54,6 @@ const createAccountRequest = async (req, res) => {
     });
 
     await newAccount.save();
-    await emailSendService(email, username, activatecode);
     await addPurchasedCoursesField();
     res
       .status(200)

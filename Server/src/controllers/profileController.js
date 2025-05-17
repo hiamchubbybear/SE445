@@ -52,12 +52,13 @@ const getAllProfiles = async (req, res) => {
   try {
     await ensureConnected();
 
-    const users = await User.find({}, "-password -activatecode");
+    const users = await User.find({}, "-password -activatecode -docs -quizz");
     res.status(200).json({ total: users.length, users });
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
+
 module.exports = {
   getProfile,
   updateProfile,

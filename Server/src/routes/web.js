@@ -14,6 +14,14 @@ const {
   updateCourse,
   userGetCourses,
   deleteCourse,
+  addDocToCourse,
+addQuizToDoc,
+deleteDocFromCourse,
+deleteQuizFromDoc,
+getAllCoursesWithOutDocsAndQuizz,
+getAllDocsFromCourse,
+updateDocInCourse,
+updateQuizInDoc,
 } = require("../controllers/coursesController.js");
 const {
   getCart,
@@ -44,34 +52,26 @@ route.post("/login", Login);
 route.post("/forgot-password", forgotPasswordRequest);
 route.post("/reset-password", resetPassword);
 // Admin Course Management
-route.get("/admin/courses", verifyToken, requireRole("ADMIN"), getCourses);
+// New
+route.get("/admin/courses/docs/quizzes", verifyToken, requireRole("ADMIN"),getCourses);
+route.get("/admin/courses", verifyToken, requireRole("ADMIN"), getAllCoursesWithOutDocsAndQuizz);
 route.post("/admin/courses", verifyToken, requireRole("ADMIN"), createCourse);
-route.put(
-  "/admin/courses/:id",
-  verifyToken,
-  requireRole("ADMIN"),
-  updateCourse
-);
-route.delete(
-  "/admin/courses/:id",
-  verifyToken,
-  requireRole("ADMIN"),
-  deleteCourse
-);
+route.put("/admin/courses/:id",verifyToken,requireRole("ADMIN"),updateCourse);
+route.delete("/admin/courses/:id",verifyToken,requireRole("ADMIN"),deleteCourse);
 route.get("/admin/profiles", verifyToken, requireRole("ADMIN"), getAllProfiles);
+//  Admin Documents
+// New
+route.post("/admin/courses/:id/docs", verifyToken, requireRole("ADMIN") , addDocToCourse);
+route.post("/admin/courses/:id/docs/:docId/quizzes", verifyToken, requireRole("ADMIN") , addQuizToDoc);
+route.delete("/admin/courses/:id/docs/:docId", verifyToken, requireRole("ADMIN") , deleteDocFromCourse);
+route.delete("/admin/courses/:id/docs/:docId/quizzes/:quizId", verifyToken, requireRole("ADMIN") , deleteQuizFromDoc);
+route.get("/admin/courses/:id/docs", verifyToken, getAllDocsFromCourse);
+route.put("/admin/courses/:id/docs/:docId", verifyToken, requireRole("ADMIN"), updateDocInCourse);
+route.put("/admin/courses/:id/docs/:docId/quizzes/:quizId", verifyToken, requireRole("ADMIN"), updateQuizInDoc);
+
 // Admin Account Management
-route.post(
-  "/admin/inactivate",
-  verifyToken,
-  requireRole("ADMIN"),
-  inactivateAccount
-);
-route.post(
-  "/admin/activate",
-  verifyToken,
-  requireRole("ADMIN"),
-  activateAccount
-);
+route.post("/admin/inactivate",verifyToken,requireRole("ADMIN"),inactivateAccount);
+route.post("/admin/activate",verifyToken,requireRole("ADMIN"),activateAccount);
 // Cart (User Authenticated Required)
 route.get("/cart", verifyToken, getCart);
 route.post("/cart/add", verifyToken, addToCart);
