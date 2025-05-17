@@ -23,6 +23,14 @@ const UserSchema = new mongoose.Schema(
         message: "Email is not a valid email address!",
       },
     },
+    avatar: {
+      type: String,
+      validate: {
+        validator: (value) => !value || validator.isURL(value),
+        message: "Avatar must be a valid URL",
+      },
+      default: "",
+    },
     activatecode: {
       type: String,
       default: "",
@@ -32,11 +40,13 @@ const UserSchema = new mongoose.Schema(
       enum: ["active", "inactive", "deleted"],
       default: "active",
     },
-    purchasedCourses: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Course",
-      default: []
-    }],
+    purchasedCourses: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Course",
+        default: [],
+      },
+    ],
   },
   { timestamps: true }
 );

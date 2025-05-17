@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
-const User = require("../collection/users.js")
+const User = require("../collection/users.js");
 const CONNECTION_STRING =
   process.env.MONGO_URI || "mongodb://localhost:27017/se445";
 
@@ -30,12 +30,13 @@ const updateProfile = async (req, res) => {
   try {
     await ensureConnected();
 
-    const { username, email, password } = req.body;
+    const { username, email, password, avatar } = req.body;
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ message: "User not found" });
 
     if (username) user.username = username;
     if (email) user.email = email;
+    if (avatar) user.avatar = avatar;
     if (password) user.password = await bcrypt.hash(password, 10);
 
     await user.save();
@@ -46,6 +47,7 @@ const updateProfile = async (req, res) => {
     res.status(500).json({ message: "Update failed", error: err.message });
   }
 };
+
 const getAllProfiles = async (req, res) => {
   try {
     await ensureConnected();

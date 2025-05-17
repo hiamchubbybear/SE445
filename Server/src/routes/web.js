@@ -13,6 +13,7 @@ const {
   createCourse,
   updateCourse,
   userGetCourses,
+  deleteCourse,
 } = require("../controllers/coursesController.js");
 const {
   getCart,
@@ -51,6 +52,12 @@ route.put(
   requireRole("ADMIN"),
   updateCourse
 );
+route.delete(
+  "/admin/courses/:id",
+  verifyToken,
+  requireRole("ADMIN"),
+  deleteCourse
+);
 route.get("/admin/profiles", verifyToken, requireRole("ADMIN"), getAllProfiles);
 // Admin Account Management
 route.post(
@@ -65,7 +72,6 @@ route.post(
   requireRole("ADMIN"),
   activateAccount
 );
-
 // Cart (User Authenticated Required)
 route.get("/cart", verifyToken, getCart);
 route.post("/cart/add", verifyToken, addToCart);
