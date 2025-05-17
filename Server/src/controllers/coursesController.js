@@ -101,7 +101,6 @@ const userGetCourses = async (req, res) => {
     const purchasedCourses = result.filter((course) => course.purchased);
     const notPurchasedCourses = result.filter((course) => !course.purchased);
     const sortedCourses = [...purchasedCourses, ...notPurchasedCourses];
-
     res.status(200).json({ courses: sortedCourses });
   } catch (error) {
     const status = 500;
@@ -110,10 +109,30 @@ const userGetCourses = async (req, res) => {
     res.status(status).send(errorMsg);
   }
 };
+const deleteCourse = async (req, res) => {
+  try {
+    await mongoose.connect(CONNECTION_STRING);
+    const userRole = req.user.role;
+    if (userRole !== "ADMIN") {
+      return res.status(403).json({ message: "Only admin can delete courses" });
+    }
+    const { id } = req.params;
+    const course = await Course.findById(id);
+    if (!course) {
+      return res.status(404).json({ message: "Course not found" });
+    }
 
+    await course.deleteOne();
+    res.status(200).json({ message: "Course deleted successfully" });
+  } catch (err) {
+    console.error("Delete course error:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
 module.exports = {
   getCourses,
   createCourse,
   userGetCourses,
   updateCourse,
+  deleteCourse,
 };
