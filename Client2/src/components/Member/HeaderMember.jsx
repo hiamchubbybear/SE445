@@ -98,17 +98,6 @@ const HeaderMember = () => {
           >
             Thảo luận
           </Link>
-
-          <Link
-            to="/member/payment"
-            className={`p-3 rounded-md font-bold transition ${
-              isActive("/member/payment")
-                ? "bg-blue-100 text-blue-600"
-                : "text-gray-700 hover:bg-gray-200 hover:text-blue-600"
-            }`}
-          >
-            Thanh toán
-          </Link>
         </nav>
 
         {/* Giỏ hàng + Avatar */}
@@ -133,7 +122,7 @@ const HeaderMember = () => {
               className="flex items-center space-x-2"
             >
               <img
-                src="https://i.pravatar.cc/42"
+                src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
                 alt="avatar"
                 className="w-8 h-8 rounded-full"
               />

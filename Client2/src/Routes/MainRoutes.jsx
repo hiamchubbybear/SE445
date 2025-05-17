@@ -15,6 +15,10 @@ import ListAllCourses from "../pages/AdminPages/Courses/ListAllCourses";
 import UserManager from "../pages/AdminPages/User/UserManager";
 import ResetPassword from "../pages/ResetPassword";
 import CartPage from "../pages/MemberPages/CartPage";
+import ForumPage from "../pages/MemberPages/ForumPage";
+import PostDetail from "../pages/MemberPages/PostDetail";
+import ProfilePage from "../pages/MemberPages/ProfilePage";
+import UpdateProfile from "../pages/MemberPages/UpdateProfile";
 export default function MainRoutes() {
   return (
     <>
@@ -32,6 +36,10 @@ export default function MainRoutes() {
           <Route index element={<HomeMember />} />
           <Route path="/member/courses" element={<CourseList />} />
           <Route path="/member/cart" element={<CartPage />} />
+          <Route path="/member/discussions" element={<ForumPage />} />
+          <Route path="/member/discussions/:id" element={<PostDetail />} />
+          <Route path="/member/profile" element={<ProfilePage />} />
+          <Route path="/member/profile/update" element={<UpdateProfile />} />
         </Route>
         <Route path="/admin" element={<AdminPage />}>
           <Route path="/admin/dashboard" element={<DashBoard />} />
