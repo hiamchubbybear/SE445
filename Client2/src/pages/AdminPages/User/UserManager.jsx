@@ -36,9 +36,9 @@ export default function UserManager() {
   }, []);
 
   const toggleStatus = async (user) => {
-    const isActive = user.status === "activate";
+    const isActive = user.status === "active";
     const url = `http://localhost:8080/v1/admin/${
-      isActive ? "inactivate" : "activate"
+      isActive ? "inactive" : "active"
     }`;
     try {
       await axios.post(
@@ -54,7 +54,7 @@ export default function UserManager() {
       setUsers((prev) =>
         prev.map((u) =>
           u._id === user._id
-            ? { ...u, status: isActive ? "inactive" : "activate" }
+            ? { ...u, status: isActive ? "inactive" : "active" }
             : u
         )
       );
@@ -90,17 +90,15 @@ export default function UserManager() {
                 <TableCell>{user.username}</TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell>
-                  {user.status === "activate"
-                    ? "✅ Hoạt động"
-                    : "❌ Đã vô hiệu"}
+                  {user.status === "active" ? "✅ Hoạt động" : "❌ Đã vô hiệu"}
                 </TableCell>
                 <TableCell align="center">
                   <Button
                     variant="contained"
-                    color={user.status === "activate" ? "error" : "success"}
+                    color={user.status === "active" ? "error" : "success"}
                     onClick={() => toggleStatus(user)}
                   >
-                    {user.status === "activate" ? "Vô hiệu hoá" : "Kích hoạt"}
+                    {user.status === "active" ? "Vô hiệu hoá" : "Kích hoạt"}
                   </Button>
                 </TableCell>
               </TableRow>

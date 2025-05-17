@@ -7,7 +7,9 @@ export default function UpdateProfile() {
     username: "",
     email: "",
     password: "",
+    avatar: "",
   });
+
   const [message, setMessage] = useState("");
 
   // Lấy dữ liệu ban đầu từ /v1/profile
@@ -22,7 +24,8 @@ export default function UpdateProfile() {
         setForm({
           username: res.data.username,
           email: res.data.email,
-          password: "", // Không show mật khẩu
+          password: "",
+          avatar: res.data.avatar || "",
         });
       } catch (err) {
         console.error("Lỗi khi tải profile:", err);
@@ -39,11 +42,12 @@ export default function UpdateProfile() {
     e.preventDefault();
     try {
       const res = await axios.put(
-        "http://localhost:8080/v1/profile",
+        "http://localhost:8080/v1",
         {
           username: form.username,
           email: form.email,
           password: form.password,
+          avatar: form.avatar, // gửi avatar nếu có
         },
         {
           headers: {
@@ -71,6 +75,36 @@ export default function UpdateProfile() {
         className="bg-white p-6 rounded shadow border space-y-4"
       >
         <div>
+          <div>
+            <label className="block mb-1 text-sm font-medium text-gray-700">
+              Ảnh đại diện (URL)
+            </label>
+            <input
+              type="text"
+              name="avatar"
+              value={form.avatar}
+              onChange={handleChange}
+              className="w-full border rounded px-3 py-2"
+              placeholder="Dán link ảnh..."
+            />
+            <div className="mt-2">
+              <img
+                src={
+                  form.avatar.trim()
+                    ? form.avatar
+                    : "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                }
+                alt="Avatar Preview"
+                className="w-24 h-24 object-cover rounded-full border"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src =
+                    "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+                }}
+              />
+            </div>
+          </div>
+
           <label className="block mb-1 text-sm font-medium text-gray-700">
             Tên người dùng
           </label>

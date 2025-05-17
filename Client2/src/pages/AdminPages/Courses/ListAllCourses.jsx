@@ -13,19 +13,24 @@ import {
   IconButton,
 } from "@mui/material";
 import { Add, Edit, Delete } from "@mui/icons-material";
+import ArticleIcon from "@mui/icons-material/Article";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AddCourseDialog from "./AddCourseDialog";
 import EditCourseDialog from "./EditCourseDialog";
+import ManageDocsModal from "./ManageDocsModal";
 import TablePagination from "@mui/material/TablePagination";
+
 function ListAllCourses() {
   const [courses, setCourses] = useState([]);
   const [openAdd, setOpenAdd] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState(null);
-  const [page, setPage] = useState(0); // page bắt đầu từ 0
+  const [openDocs, setOpenDocs] = useState(false);
+  const [page, setPage] = useState(0);
   const rowsPerPage = 10;
+
   useEffect(() => {
     fetchCourses();
   }, []);
@@ -65,6 +70,11 @@ function ListAllCourses() {
     setOpenEdit(true);
   };
 
+  const handleManageDocs = (course) => {
+    setSelectedCourse(course);
+    setOpenDocs(true);
+  };
+
   const handleCourseAdded = (newCourse) => {
     setCourses((prev) => [...prev, newCourse]);
   };
@@ -82,7 +92,6 @@ function ListAllCourses() {
           Danh sách khoá học
         </Typography>
         <div className="flex flex-row">
-          {" "}
           <Button
             variant="contained"
             color="primary"
@@ -123,7 +132,6 @@ function ListAllCourses() {
                 .map((course, index) => (
                   <TableRow key={course._id}>
                     <TableCell>{page * rowsPerPage + index + 1}</TableCell>
-                    {/* ✅ STT bắt đầu từ 1 */}
                     <TableCell>{course.title}</TableCell>
                     <TableCell>{course.description}</TableCell>
                     <TableCell>
@@ -157,6 +165,12 @@ function ListAllCourses() {
                     </TableCell>
                     <TableCell align="center">
                       <IconButton
+                        color="info"
+                        onClick={() => handleManageDocs(course)}
+                      >
+                        <ArticleIcon />
+                      </IconButton>
+                      <IconButton
                         color="primary"
                         onClick={() => handleEdit(course)}
                       >
@@ -173,7 +187,7 @@ function ListAllCourses() {
                 ))}
               {courses.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={6} align="center">
+                  <TableCell colSpan={8} align="center">
                     Không có dữ liệu
                   </TableCell>
                 </TableRow>
@@ -194,6 +208,11 @@ function ListAllCourses() {
         onClose={() => setOpenEdit(false)}
         course={selectedCourse}
         onUpdated={handleCourseUpdated}
+      />
+      <ManageDocsModal
+        open={openDocs}
+        onClose={() => setOpenDocs(false)}
+        course={selectedCourse}
       />
 
       <ToastContainer position="top-right" autoClose={2000} />

@@ -30,9 +30,18 @@ export default function ProfilePage() {
       <div className="bg-white rounded-lg shadow-lg p-6 border">
         <div className="flex items-center gap-4 mb-6">
           <img
-            src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+            src={
+              user.avatar && user.avatar.trim() !== ""
+                ? user.avatar
+                : "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+            }
             alt="Avatar"
             className="w-20 h-20 rounded-full object-cover border"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src =
+                "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+            }}
           />
           <div>
             <h2 className="text-2xl font-bold text-gray-800">

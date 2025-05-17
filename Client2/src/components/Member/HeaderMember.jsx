@@ -7,6 +7,7 @@ const HeaderMember = () => {
   const [username, setUsername] = useState("Người dùng");
   const [openMenu, setOpenMenu] = useState(false);
   const [cartCount, setCartCount] = useState(0);
+  const [user, setUser] = useState(null);
   const menuRef = useRef();
   const location = useLocation();
   const navigate = useNavigate();
@@ -30,7 +31,22 @@ const HeaderMember = () => {
   useEffect(() => {
     fetchCartCount();
   }, []);
+  const fetchProfile = async () => {
+    try {
+      const res = await axios.get("http://localhost:8080/v1", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      setUser(res.data);
+    } catch (err) {
+      console.error("Lỗi khi tải profile:", err);
+    }
+  };
 
+  useEffect(() => {
+    fetchProfile();
+  }, []);
   const fetchCartCount = async () => {
     try {
       const res = await axios.get("http://localhost:8080/v1/cart", {
@@ -39,8 +55,8 @@ const HeaderMember = () => {
         },
       });
 
-      console.log("Giỏ hàng:", res.data); // <== THÊM DÒNG NÀY
-      setCartCount(res.data.items?.length || 0);
+      console.log("Giỏ hàng:", res.data);
+      setCartCount(res.data.cart?.courses?.length || 0);
     } catch (err) {
       console.error("Không thể lấy giỏ hàng:", err.response?.data || err);
     }
@@ -122,12 +138,21 @@ const HeaderMember = () => {
               className="flex items-center space-x-2"
             >
               <img
-                src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-                alt="avatar"
-                className="w-8 h-8 rounded-full"
+                src={
+                  user?.avatar?.trim()
+                    ? user.avatar
+                    : "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                }
+                alt="Avatar"
+                className="w-8 h-8 rounded-full object-cover border"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src =
+                    "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+                }}
               />
               <span className="text-sm font-medium text-gray-800">
-                {username}
+                {user?.username || "Người dùng"}
               </span>
             </button>
 
