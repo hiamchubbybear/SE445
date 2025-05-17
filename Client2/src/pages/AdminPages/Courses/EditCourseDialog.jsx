@@ -34,8 +34,8 @@ export default function EditCourseDialog({ open, onClose, course, onUpdated }) {
 
   const handleUpdate = async () => {
     try {
-      const res = await axios.post(
-        `http://localhost:8080/v1/admin/courses?id=${course._id}`,
+      const res = await axios.put(
+        `http://localhost:8080/v1/admin/courses/${course._id}`,
         {
           ...form,
           tags: form.tags.split(",").map((t) => t.trim()),

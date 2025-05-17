@@ -14,6 +14,7 @@ import AdminPage from "../pages/AdminPages/AdminPage";
 import ListAllCourses from "../pages/AdminPages/Courses/ListAllCourses";
 import UserManager from "../pages/AdminPages/User/UserManager";
 import ResetPassword from "../pages/ResetPassword";
+import CartPage from "../pages/MemberPages/CartPage";
 export default function MainRoutes() {
   return (
     <>
@@ -30,6 +31,7 @@ export default function MainRoutes() {
         <Route path="/member" element={<MainMember />}>
           <Route index element={<HomeMember />} />
           <Route path="/member/courses" element={<CourseList />} />
+          <Route path="/member/cart" element={<CartPage />} />
         </Route>
         <Route path="/admin" element={<AdminPage />}>
           <Route path="/admin/dashboard" element={<DashBoard />} />
