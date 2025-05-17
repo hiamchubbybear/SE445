@@ -19,6 +19,8 @@ import ForumPage from "../pages/MemberPages/ForumPage";
 import PostDetail from "../pages/MemberPages/PostDetail";
 import ProfilePage from "../pages/MemberPages/ProfilePage";
 import UpdateProfile from "../pages/MemberPages/UpdateProfile";
+import PrivateRoute from "./PrivateRoute";
+
 export default function MainRoutes() {
   return (
     <>
@@ -32,7 +34,16 @@ export default function MainRoutes() {
         </Route>
         <Route path="/forgot-password" element={<ForgetPass />} />
         <Route path="*" element={<h1>404 Not Found</h1>} />
-        <Route path="/member" element={<MainMember />}>
+
+        {/* ✅ Các route cần đăng nhập */}
+        <Route
+          path="/member"
+          element={
+            <PrivateRoute>
+              <MainMember />
+            </PrivateRoute>
+          }
+        >
           <Route index element={<HomeMember />} />
           <Route path="/member/courses" element={<CourseList />} />
           <Route path="/member/cart" element={<CartPage />} />
@@ -41,7 +52,15 @@ export default function MainRoutes() {
           <Route path="/member/profile" element={<ProfilePage />} />
           <Route path="/member/profile/update" element={<UpdateProfile />} />
         </Route>
-        <Route path="/admin" element={<AdminPage />}>
+
+        <Route
+          path="/admin"
+          element={
+            <PrivateRoute>
+              <AdminPage />
+            </PrivateRoute>
+          }
+        >
           <Route path="/admin/dashboard" element={<DashBoard />} />
           <Route path="/admin/courses" element={<ListAllCourses />} />
           <Route path="/admin/users" element={<UserManager />} />
