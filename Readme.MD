@@ -9,7 +9,7 @@ This repository contains the source code for the SE445 project, built using Node
 - [Project Structure](#project-structure)
 - [Contributing](#contributing)
 - [License](#license)
-
+BE Local Host
 ## Installation
 
 1. **Install Node.js and npm**
@@ -58,6 +58,45 @@ This repository contains the source code for the SE445 project, built using Node
 - `package.json`: Project configuration and dependencies.
 
 ## Contributing
+#FE run
+1. **Install Node.js and npm**
+   Ensure that Node.js and npm are installed on your system. You can download them from the Node.js website, as npm is included with Node.js.
+
+   **To verify the installation**, run the following commands in your terminal:
+
+   ```
+   node -v
+   npm -v
+   ```
+
+   If both versions appear, you're ready to proceed. Otherwise, follow the installation steps on the Node.js website.
+
+2. **Clone the repository**:
+
+   ```
+   git clone https://github.com/hiamchubbybear/SE445.git
+   cd SE445/Client2
+   ```
+
+3. **Install dependencies using npm**:
+
+   ```
+   npm install
+   ```
+
+## Usage
+
+1. Start the server:
+
+   ```
+   npm run dev 
+   ```
+
+2. Open your browser and navigate to:
+
+   ```
+   http://localhost:5173
+   ```
 
 Feel free to open issues and submit pull requests. Contributions are welcome!
 
