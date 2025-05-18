@@ -318,4 +318,5 @@ module.exports = {
   updateQuizInDoc,
   getQuizById,
   getAllQuizzesInDoc,
+
 };

@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Cart = require("../collection/cart");
 const User = require("../collection/users");
-const Course = require("../collection/courses")
+const Course = require("../collection/courses");
 const CONNECTION_STRING = process.env.MONGODB_URI;
 const PurchaseHistory = require("../collection/purchase.js");
 
@@ -71,5 +71,43 @@ const getPurchaseHistory = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+const getAllPurchaseHistory = async (req, res) => {
+  try {
+    await mongoose.connect(CONNECTION_STRING);
 
-module.exports = { purchaseCourses  ,getPurchaseHistory};
+    const histories = await PurchaseHistory.find()
+      .populate("userId", "username email")
+      .populate("courses", "title price image")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({ histories });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+const getOnePurchaseHistory = async (req, res) => {
+  const { historyId } = req.params;
+
+  try {
+    await mongoose.connect(CONNECTION_STRING);
+
+    const history = await PurchaseHistory.findById(historyId)
+      .populate("userId", "username email _id")
+      .populate("courses", "title price image");
+    if (!history) {
+      return res.status(404).json({ message: "Purchase history not found" });
+    }
+    const isOwner = history.userId._id.toString() === req.user.id;
+    const isAdmin = req.user.role === "ADMIN";
+
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({ message: "Forbidden: Access denied" });
+    }
+
+    res.status(200).json({ history });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+module.exports = { purchaseCourses, getPurchaseHistory, getAllPurchaseHistory ,getOnePurchaseHistory };
