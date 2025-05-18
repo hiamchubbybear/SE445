@@ -9,7 +9,7 @@ const getCart = async (req, res) => {
   const userId = req.user.id;
   try {
     await mongoose.connect(CONNECTION_STRING);
-    const cart = await Cart.findOne({ userId }).populate("courses");
+    const cart = await Cart.findOne({ userId })
     res.status(200).json({ cart });
   } catch (err) {
     res.status(500).json({ message: err.message });
