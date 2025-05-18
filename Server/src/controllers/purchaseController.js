@@ -1,13 +1,15 @@
 const mongoose = require("mongoose");
 const Cart = require("../collection/cart");
 const User = require("../collection/users");
+const Course = require("../collection/courses")
 const CONNECTION_STRING = process.env.MONGODB_URI;
+const PurchaseHistory = require("../collection/purchase.js");
+
 const purchaseCourses = async (req, res) => {
   try {
     await mongoose.connect(CONNECTION_STRING);
 
     const userId = new mongoose.Types.ObjectId(req.user.id);
-
     const cart = await Cart.findOne({ userId });
     if (!cart || cart.courses.length === 0) {
       return res.status(400).json({ message: "Cart is empty" });
@@ -15,10 +17,6 @@ const purchaseCourses = async (req, res) => {
 
     const user = await User.findById(userId).exec();
     if (!user) return res.status(404).json({ message: "User not found" });
-
-    console.log("User loaded:", user);
-    console.log("Type of purchasedCourses:", typeof user.purchasedCourses);
-    console.log("Is Array?", Array.isArray(user.purchasedCourses));
 
     user.purchasedCourses = user.purchasedCourses || [];
     const purchasedIds = user.purchasedCourses.map((id) => id.toString());
@@ -28,16 +26,50 @@ const purchaseCourses = async (req, res) => {
     if (newCourses.length === 0) {
       return res.status(400).json({ message: "No new courses to purchase" });
     }
+
+    const coursesInfo = await Course.find({ _id: { $in: newCourses } });
+    const totalPrice = coursesInfo.reduce(
+      (sum, course) => sum + (course.price || 0),
+      0
+    );
+
+    const history = new PurchaseHistory({
+      userId,
+      courses: newCourses,
+      totalPrice,
+    });
+    await history.save();
+
     user.purchasedCourses = user.purchasedCourses.concat(newCourses);
     await user.save();
+
     cart.courses = [];
     await cart.save();
-    res
-      .status(200)
-      .json({ message: "Purchase successful", purchased: newCourses });
+
+    res.status(200).json({
+      message: "Purchase successful",
+      purchased: newCourses,
+      totalPrice,
+      historyId: history._id,
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-module.exports = { purchaseCourses };
+const getPurchaseHistory = async (req, res) => {
+  try {
+    await mongoose.connect(CONNECTION_STRING);
+    const userId = req.user.id;
+
+    const history = await PurchaseHistory.find({ userId })
+      .populate("courses", "title price image")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({ history });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+module.exports = { purchaseCourses  ,getPurchaseHistory};

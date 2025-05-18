@@ -9,8 +9,25 @@ const getCart = async (req, res) => {
   const userId = req.user.id;
   try {
     await mongoose.connect(CONNECTION_STRING);
-    const cart = await Cart.findOne({ userId })
-    res.status(200).json({ cart });
+
+    const cart = await Cart.findOne({ userId }).populate({
+      path: "courses",
+      select: "-docs -createdAt -updatedAt -description",
+    });
+    if (!cart) {
+      return res.status(404).json({ message: "Cart not found" });
+    }
+    const totalPrice = cart.courses.reduce(
+      (sum, course) => sum + (course.price || 0),
+      0
+    );
+
+    res.status(200).json({
+      cart: {
+        ...cart.toObject(),
+        totalPrice,
+      },
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
