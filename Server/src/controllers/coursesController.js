@@ -74,12 +74,7 @@ const userGetCourses = async (req, res) => {
 
     const userId = req.user?.id;
     const courses = await Course.find();
-    const user = await User.findById(userId).populate(
-      "purchasedCourses",
-      null,
-      null,
-      { strictPopulate: false }
-    );
+    const user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).json({
@@ -87,10 +82,15 @@ const userGetCourses = async (req, res) => {
         data: { message: "User not found" },
       });
     }
-
-    const purchasedIds = (user.purchasedCourses || []).map((course) =>
-      course._id.toString()
+    const purchasedIds = (user.purchasedCourses || []).map((id) =>
+      id.toString()
     );
+    console.log("purchasedCourses from DB: ", user.purchasedCourses);
+    console.log(
+      "All course ids: ",
+      courses.map((c) => c._id.toString())
+    );
+
     const result = courses.map((course) => {
       const isPurchased = purchasedIds.includes(course._id.toString());
       return {
@@ -98,9 +98,11 @@ const userGetCourses = async (req, res) => {
         purchased: isPurchased,
       };
     });
+
     const purchasedCourses = result.filter((course) => course.purchased);
     const notPurchasedCourses = result.filter((course) => !course.purchased);
     const sortedCourses = [...purchasedCourses, ...notPurchasedCourses];
+
     res.status(200).json({ courses: sortedCourses });
   } catch (error) {
     const status = 500;
@@ -109,6 +111,7 @@ const userGetCourses = async (req, res) => {
     res.status(status).send(errorMsg);
   }
 };
+
 const deleteCourse = async (req, res) => {
   try {
     await mongoose.connect(CONNECTION_STRING);
@@ -255,19 +258,45 @@ const updateQuizInDoc = async (req, res) => {
     await mongoose.connect(CONNECTION_STRING);
     const course = await Course.findById(id);
     if (!course) return res.status(404).json({ message: "Course not found" });
-
     const doc = course.docs.id(docId);
     if (!doc) return res.status(404).json({ message: "Document not found" });
-
     const quiz = doc.quizzes.id(quizId);
     if (!quiz) return res.status(404).json({ message: "Quiz not found" });
-
     if (question) quiz.question = question;
     if (options) quiz.options = options;
     if (correctAnswer !== undefined) quiz.correctAnswer = correctAnswer;
-
     await course.save();
     res.status(200).json({ message: "Quiz updated", quiz });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+const getAllQuizzesInDoc = async (req, res) => {
+  const { id, docId } = req.params;
+  try {
+    await mongoose.connect(CONNECTION_STRING);
+    const course = await Course.findById(id);
+    if (!course) return res.status(404).json({ message: "Course not found" });
+
+    const doc = course.docs.id(docId);
+    if (!doc) return res.status(404).json({ message: "Document not found" });
+    res.status(200).json({ quizzes: doc.quizzes });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+const getQuizById = async (req, res) => {
+  const { id, docId, quizId } = req.params;
+
+  try {
+    await mongoose.connect(CONNECTION_STRING);
+    const course = await Course.findById(id);
+    if (!course) return res.status(404).json({ message: "Course not found" });
+    const doc = course.docs.id(docId);
+    if (!doc) return res.status(404).json({ message: "Document not found" });
+    const quiz = doc.quizzes.id(quizId);
+    if (!quiz) return res.status(404).json({ message: "Quiz not found" });
+    res.status(200).json({ quiz });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -287,4 +316,6 @@ module.exports = {
   getAllDocsFromCourse,
   updateDocInCourse,
   updateQuizInDoc,
+  getQuizById,
+  getAllQuizzesInDoc,
 };

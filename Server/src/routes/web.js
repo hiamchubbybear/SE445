@@ -15,13 +15,17 @@ const {
   userGetCourses,
   deleteCourse,
   addDocToCourse,
-addQuizToDoc,
-deleteDocFromCourse,
-deleteQuizFromDoc,
-getAllCoursesWithOutDocsAndQuizz,
-getAllDocsFromCourse,
-updateDocInCourse,
-updateQuizInDoc,
+  addQuizToDoc,
+  deleteDocFromCourse,
+  deleteQuizFromDoc,
+  getAllCoursesWithOutDocsAndQuizz,
+  getAllDocsFromCourse,
+  updateDocInCourse,
+  updateQuizInDoc,
+  getAllQuizzesInDoc,
+  getQuizById
+
+
 } = require("../controllers/coursesController.js");
 const {
   getCart,
@@ -68,6 +72,9 @@ route.delete("/admin/courses/:id/docs/:docId/quizzes/:quizId", verifyToken, requ
 route.get("/admin/courses/:id/docs", verifyToken, getAllDocsFromCourse);
 route.put("/admin/courses/:id/docs/:docId", verifyToken, requireRole("ADMIN"), updateDocInCourse);
 route.put("/admin/courses/:id/docs/:docId/quizzes/:quizId", verifyToken, requireRole("ADMIN"), updateQuizInDoc);
+// New
+route.get("/admin/courses/:id/docs/:docId/quizzes", getAllQuizzesInDoc);
+route.get("/admin/courses/:id/docs/:docId/quizzes/:quizId", getQuizById);
 
 // Admin Account Management
 route.post("/admin/inactivate",verifyToken,requireRole("ADMIN"),inactivateAccount);
