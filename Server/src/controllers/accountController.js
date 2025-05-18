@@ -16,13 +16,11 @@ const CONNECTION_STRING = process.env.MONGODB_URI;
 const SIGNER_KEY = process.env.SIGNER_KEY;
 const clientURL = process.env.CLIENT_URL;
 
-const UserModel = require('../collection/users.js');
-
+const UserModel = require("../collection/users.js");
 
 const createAccountRequest = async (req, res) => {
   try {
     await connectToDatabase(CONNECTION_STRING);
-
     const { username, password, email } = req.body;
     if (!username || !password || !email) {
       return res
@@ -51,21 +49,19 @@ const createAccountRequest = async (req, res) => {
       email,
       activatecode,
       status: "active",
+      purchasedCourses: [],
     });
 
     await newAccount.save();
-    await addPurchasedCoursesField();
-    res
-      .status(200)
-      .json(
-        new AccountDTO(
-          "200",
-          "Sent email and created account",
-          username,
-          password,
-          email
-        )
-      );
+    res.status(200).json(
+      new AccountDTO(
+        "200",
+        "Sent email and created account",
+        username,
+        undefined,
+        email
+      )
+    );
   } catch (error) {
     console.error("createAccountRequest error:", error.message);
     res.status(500).send(new ErrorMessage(500, { message: error.message }));
