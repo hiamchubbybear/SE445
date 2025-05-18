@@ -20,6 +20,8 @@ import PostDetail from "../pages/MemberPages/PostDetail";
 import ProfilePage from "../pages/MemberPages/ProfilePage";
 import UpdateProfile from "../pages/MemberPages/UpdateProfile";
 import PostAdminTable from "../pages/AdminPages/PostManager/PostAdminTable";
+import CourseStudyPage from "../pages/MemberPages/CourseStudyPage";
+import PurchaseHistoryAdmin from "../pages/AdminPages/Purchase/PurchaseHistoryAdmin";
 export default function MainRoutes() {
   return (
     <>
@@ -41,12 +43,17 @@ export default function MainRoutes() {
           <Route path="/member/discussions/:id" element={<PostDetail />} />
           <Route path="/member/profile" element={<ProfilePage />} />
           <Route path="/member/profile/update" element={<UpdateProfile />} />
+          <Route
+            path="/member/courses/:courseId/study"
+            element={<CourseStudyPage />}
+          />
         </Route>
         <Route path="/admin" element={<AdminPage />}>
           <Route path="/admin/dashboard" element={<DashBoard />} />
           <Route path="/admin/courses" element={<ListAllCourses />} />
           <Route path="/admin/users" element={<UserManager />} />
           <Route path="/admin/discussions" element={<PostAdminTable />} />
+          <Route path="/admin/purchases" element={<PurchaseHistoryAdmin />} />
         </Route>
       </Routes>
     </>

@@ -1,10 +1,10 @@
-// ProfilePage.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
 export default function ProfilePage() {
   const [user, setUser] = useState(null);
+  const [purchasedCourses, setPurchasedCourses] = useState([]);
 
   const fetchProfile = async () => {
     try {
@@ -14,13 +14,33 @@ export default function ProfilePage() {
         },
       });
       setUser(res.data);
+      console.log("📥 Profile nhận được:", res.data);
     } catch (err) {
       console.error("Lỗi khi tải profile:", err);
     }
   };
 
+  const fetchPurchaseHistory = async () => {
+    try {
+      const res = await axios.get("http://localhost:8080/v1/purchase-history", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      const allCourses = res.data.history.flatMap((h) => h.courses);
+      const uniqueCourses = Array.from(
+        new Map(allCourses.map((c) => [c._id, c])).values()
+      );
+      setPurchasedCourses(uniqueCourses);
+    } catch (err) {
+      console.error("Lỗi khi tải lịch sử mua:", err);
+    }
+  };
+
   useEffect(() => {
     fetchProfile();
+    fetchPurchaseHistory();
   }, []);
 
   if (!user) return <div className="text-center p-8">Đang tải...</div>;
@@ -60,10 +80,10 @@ export default function ProfilePage() {
 
         <div className="border-t pt-4">
           <h3 className="text-lg font-semibold mb-2">Khóa học đã mua</h3>
-          {user.purchasedCourses?.length > 0 ? (
+          {purchasedCourses.length > 0 ? (
             <ul className="list-disc list-inside space-y-1 text-gray-700">
-              {user.purchasedCourses.map((course, index) => (
-                <li key={index}>{course.title}</li>
+              {purchasedCourses.map((course) => (
+                <li key={course._id}>{course.title}</li>
               ))}
             </ul>
           ) : (

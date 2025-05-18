@@ -22,7 +22,7 @@ export default function ManageQuizzesModal({ open, onClose, courseId, doc }) {
     options: [""],
     correctAnswer: "",
   });
-  const [editingQuizId, setEditingQuizId] = useState(null);
+  const [editingQuiz, setEditingQuiz] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -32,9 +32,10 @@ export default function ManageQuizzesModal({ open, onClose, courseId, doc }) {
   const fetchQuizzes = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:8080/v1/admin/courses/${courseId}/docs/${doc._id}`
+        `http://localhost:8080/v1/admin/courses/${courseId}/docs/${doc._id}/quizzes`
       );
-      setQuizzes(res?.data?.doc?.quizzes || []);
+      setQuizzes(res?.data?.quizzes || []);
+      console.log("📥 Quiz nhận được:", res.data);
     } catch (err) {
       console.error("Lỗi tải quiz:", err);
     }
@@ -51,11 +52,28 @@ export default function ManageQuizzesModal({ open, onClose, courseId, doc }) {
       );
       setNewQuiz({ question: "", options: [""], correctAnswer: "" });
       fetchQuizzes();
+      console.log("Thêm quiz thành công:", res.data);
     } catch (err) {
       console.error("Lỗi thêm quiz:", err);
     }
   };
-
+  const handleUpdateQuiz = async (quiz) => {
+    try {
+      await axios.put(
+        `http://localhost:8080/v1/admin/courses/${courseId}/docs/${doc._id}/quizzes/${quiz._id}`,
+        quiz,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      setEditingQuiz(null);
+      fetchQuizzes();
+    } catch (err) {
+      console.error("Lỗi cập nhật quiz:", err);
+    }
+  };
   const handleDelete = async (quizId) => {
     if (!window.confirm("Xoá câu hỏi này?")) return;
     try {
@@ -124,6 +142,60 @@ export default function ManageQuizzesModal({ open, onClose, courseId, doc }) {
         <Typography variant="h6" mt={4} mb={2}>
           Danh sách câu hỏi
         </Typography>
+        {editingQuiz && (
+          <>
+            <Typography variant="subtitle1" mt={4}>
+              ✏️ Chỉnh sửa câu hỏi
+            </Typography>
+            <TextField
+              fullWidth
+              label="Câu hỏi"
+              value={editingQuiz.question}
+              onChange={(e) =>
+                setEditingQuiz((prev) => ({
+                  ...prev,
+                  question: e.target.value,
+                }))
+              }
+              sx={{ mt: 1, mb: 2 }}
+            />
+            {editingQuiz.options.map((opt, i) => (
+              <TextField
+                key={i}
+                fullWidth
+                label={`Đáp án ${i + 1}`}
+                value={opt}
+                onChange={(e) => {
+                  const updated = [...editingQuiz.options];
+                  updated[i] = e.target.value;
+                  setEditingQuiz((prev) => ({ ...prev, options: updated }));
+                }}
+                sx={{ mb: 1 }}
+              />
+            ))}
+            <TextField
+              fullWidth
+              label="Đáp án đúng"
+              value={editingQuiz.correctAnswer}
+              onChange={(e) =>
+                setEditingQuiz((prev) => ({
+                  ...prev,
+                  correctAnswer: e.target.value,
+                }))
+              }
+              sx={{ mb: 2 }}
+            />
+            <Button
+              variant="contained"
+              color="success"
+              onClick={() => handleUpdateQuiz(editingQuiz)}
+              sx={{ mr: 2 }}
+            >
+              Lưu chỉnh sửa
+            </Button>
+            <Button onClick={() => setEditingQuiz(null)}>Huỷ</Button>
+          </>
+        )}
         <List>
           {quizzes.map((quiz) => (
             <ListItem key={quiz._id} divider>
@@ -131,6 +203,9 @@ export default function ManageQuizzesModal({ open, onClose, courseId, doc }) {
                 primary={quiz.question}
                 secondary={`Đáp án đúng: ${quiz.correctAnswer}`}
               />
+              <IconButton color="primary" onClick={() => setEditingQuiz(quiz)}>
+                <Edit />
+              </IconButton>
               <IconButton color="error" onClick={() => handleDelete(quiz._id)}>
                 <Delete />
               </IconButton>

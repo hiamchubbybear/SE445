@@ -29,7 +29,7 @@ export default function ForumPage() {
   }, []);
 
   return (
-    <div className="max-w-2xl mx-auto p-4 min-h-[75vh]">
+    <div className="max-w-2xl mx-auto p-4 min-h-screen">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">Diễn đàn trao đổi</h1>
         <button

@@ -47,7 +47,7 @@ const CourseList = () => {
   };
 
   return (
-    <div>
+    <div className="min-h-screen  ">
       <h1 className="text-center text-2xl font-bold text-gray-800 m-4">
         Khoá học hiện có
       </h1>

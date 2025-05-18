@@ -1,57 +1,67 @@
 import React, { useEffect, useState } from "react";
-import coursesData from "../../mocks/progress.json";
+import axios from "axios";
+import { Link } from "react-router-dom";
+
 export default function HomeMember() {
   const [courses, setCourses] = useState([]);
 
   useEffect(() => {
-    setCourses(coursesData);
-    console.log(coursesData); // gán trực tiếp từ import
+    fetchMyCourses();
   }, []);
 
-  const learning = courses.filter((course) => course.status === "Đang học");
-  const completed = courses.filter((course) => course.status === "Hoàn thành");
-
-  const CourseCard = ({ course }) => (
-    <div className="p-4 border rounded-xl shadow bg-white">
-      <h2 className="text-xl font-semibold text-blue-600">{course.title}</h2>
-      <p className="text-gray-600 mb-2">{course.description}</p>
-
-      {/* Thanh tiến độ với phần trăm bên trong */}
-      <div className="w-full bg-gray-200 rounded-full h-6 relative">
-        <div
-          className={`h-6 rounded-full text-white text-sm font-medium flex items-center justify-center ${
-            course.progress === 100 ? "bg-green-500" : "bg-blue-500"
-          }`}
-          style={{ width: `${course.progress}%` }}
-        >
-          {course.progress}%
-        </div>
-      </div>
-
-      <p className="text-sm text-gray-500 mt-1">
-        Trạng thái: <span className="capitalize">{course.status}</span>
-      </p>
-    </div>
-  );
+  const fetchMyCourses = async () => {
+    try {
+      const res = await axios.get("http://localhost:8080/v1/courses", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      const purchasedCourses = res.data.courses.filter(
+        (c) => c.purchased === true
+      );
+      setCourses(purchasedCourses);
+    } catch (err) {
+      console.error("Lỗi khi lấy khoá học đã mua:", err);
+    }
+  };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold mb-4">📘 Khóa Học Đang Học</h1>
-        <div className="space-y-4">
-          {learning.map((course) => (
-            <CourseCard key={course.id} course={course} />
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <h1 className="text-2xl font-bold mb-4">✅ Khóa Học Đã Học Xong</h1>
-        <div className="space-y-4">
-          {completed.map((course) => (
-            <CourseCard key={course.id} course={course} />
-          ))}
-        </div>
+    <div className="max-w-7xl mx-auto p-6 min-h-screen ">
+      <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">
+        Khoá học của tôi
+      </h1>
+      <div className="grid grid-cols-4 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {courses.map((course) => (
+          <div
+            key={course._id}
+            className="bg-white shadow-md rounded-lg overflow-hidden"
+          >
+            <img
+              src={course.image}
+              alt={course.title}
+              className="w-full h-40 object-cover"
+            />
+            <div className="p-4">
+              <h2 className="text-lg font-semibold text-gray-800">
+                {course.title}
+              </h2>
+              <p className="text-sm text-gray-600 mt-1">{course.description}</p>
+              <div className="mt-4 text-center">
+                <Link
+                  to={`/member/courses/${course._id}/study`}
+                  className="inline-block px-4 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition"
+                >
+                  ▶️ Vào học
+                </Link>
+              </div>
+            </div>
+          </div>
+        ))}
+        {courses.length === 0 && (
+          <p className="col-span-full text-center text-gray-500">
+            Bạn chưa mua khoá học nào.
+          </p>
+        )}
       </div>
     </div>
   );

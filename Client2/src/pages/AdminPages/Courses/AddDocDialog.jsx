@@ -24,7 +24,8 @@ export default function AddDocDialog({ open, onClose, courseId, onCreated }) {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }
       );
-      onCreated(res.data.updatedCourse.docs.at(-1)); // lấy doc mới nhất
+      console.log("Dữ liệu trả về:", res.data);
+      onCreated(res.data.docs.at(-1)); // lấy doc mới nhất
       setDoc({ title: "", content: "" });
       onClose();
     } catch (err) {

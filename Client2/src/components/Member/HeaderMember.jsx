@@ -94,17 +94,6 @@ const HeaderMember = () => {
           </Link>
 
           <Link
-            to="/member/documents"
-            className={`p-3 rounded-md font-bold transition ${
-              isActive("/member/documents")
-                ? "bg-blue-100 text-blue-600"
-                : "text-gray-700 hover:bg-gray-200 hover:text-blue-600"
-            }`}
-          >
-            Tài liệu
-          </Link>
-
-          <Link
             to="/member/discussions"
             className={`p-3 rounded-md font-bold transition ${
               isActive("/member/discussions")

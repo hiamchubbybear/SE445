@@ -119,9 +119,9 @@ function ListAllCourses() {
                 <TableCell>STT</TableCell>
                 <TableCell>Tiêu đề</TableCell>
                 <TableCell>Mô tả</TableCell>
-                <TableCell>Ảnh</TableCell>
                 <TableCell>Giá</TableCell>
                 <TableCell>Tags</TableCell>
+                <TableCell>Ảnh</TableCell>
                 <TableCell>Ngày tạo</TableCell>
                 <TableCell align="center">Hành động</TableCell>
               </TableRow>

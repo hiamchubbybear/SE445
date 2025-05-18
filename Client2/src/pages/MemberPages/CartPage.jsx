@@ -5,7 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 export default function CartPage() {
   const [cartItems, setCartItems] = useState([]);
-  const [selectedIds, setSelectedIds] = useState([]); // ID khóa học đã chọn
+  const [selectedIds, setSelectedIds] = useState([]);
 
   useEffect(() => {
     fetchCart();
@@ -59,15 +59,36 @@ export default function CartPage() {
     }, 0);
   };
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     if (selectedIds.length === 0) {
       toast.info("Vui lòng chọn ít nhất một khoá học.");
       return;
     }
 
-    // TODO: Gọi API thanh toán
-    toast.success("Thanh toán thành công!");
-    // Có thể clear giỏ hàng nếu muốn sau khi thanh toán
+    try {
+      const res = await axios.post(
+        "http://localhost:8080/v1/purchase",
+        {
+          courseIds: selectedIds,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      toast.success(`Thanh toán thành công! Mã đơn: ${res.data.historyId}`);
+
+      // Xoá các khoá học đã mua khỏi cart
+      setCartItems((prev) =>
+        prev.filter((course) => !selectedIds.includes(course._id))
+      );
+      setSelectedIds([]);
+    } catch (err) {
+      console.error("Lỗi khi thanh toán:", err);
+      toast.error("Thanh toán thất bại. Vui lòng thử lại.");
+    }
   };
 
   return (

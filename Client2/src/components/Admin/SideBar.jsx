@@ -5,11 +5,10 @@ function SideBar() {
   const navigate = useNavigate();
 
   const menuItems = [
-    { label: "Quản lý tài liệu", path: "/admin/tai-lieu" },
     { label: "Quản lý tài khoản", path: "/admin/users" },
     { label: "Quản lý tin tức", path: "/admin/discussions" },
     { label: "Quản lý khoá học", path: "/admin/courses" },
-    { label: "Quản lý thanh toán", path: "/admin/thanh-toan" },
+    { label: "Quản lý thanh toán", path: "/admin/purchases" },
     { label: "Báo cáo thống kê", path: "/admin/dashboard" },
   ];
 
