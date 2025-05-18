@@ -62,29 +62,41 @@ const getPurchaseHistory = async (req, res) => {
     await mongoose.connect(CONNECTION_STRING);
     const userId = req.user.id;
 
-    const history = await PurchaseHistory.find({ userId })
+    const rawHistory = await PurchaseHistory.find({ userId })
       .populate("courses", "title price image")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
+    const history = rawHistory.map((item) => ({
+      ...item,
+      historyId: item._id,
+    }));
 
     res.status(200).json({ history });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
+
 const getAllPurchaseHistory = async (req, res) => {
   try {
     await mongoose.connect(CONNECTION_STRING);
 
-    const histories = await PurchaseHistory.find()
+    const rawHistories = await PurchaseHistory.find()
       .populate("userId", "username email")
       .populate("courses", "title price image")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
+    const histories = rawHistories.map((item) => ({
+      ...item,
+      historyId: item._id,
+    }));
 
     res.status(200).json({ histories });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
+
 const getOnePurchaseHistory = async (req, res) => {
   const { historyId } = req.params;
 
@@ -110,4 +122,9 @@ const getOnePurchaseHistory = async (req, res) => {
   }
 };
 
-module.exports = { purchaseCourses, getPurchaseHistory, getAllPurchaseHistory ,getOnePurchaseHistory };
+module.exports = {
+  purchaseCourses,
+  getPurchaseHistory,
+  getAllPurchaseHistory,
+  getOnePurchaseHistory,
+};
